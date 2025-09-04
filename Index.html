@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hidden URL Site</title>
+  <script>
+    window.onload = () => {
+      // open about:blank
+      const newWin = window.open("about:blank", "_self"); 
+      // write your site into it
+      newWin.document.write(`
+        <html>
+          <head>
+            <title>Bubbly Embed</title>
+            <style>
+              body {
+                margin:0;
+                height:100%;
+                background: linear-gradient(to bottom, #010500, #04751a, #000);
+                overflow:hidden;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                flex-direction:column;
+              }
+              iframe {
+                width:80%;
+                height:70%;
+                border:2px solid #0f0;
+                border-radius:12px;
+                background:black;
+              }
+              button {
+                margin-top:10px;
+                padding:8px 20px;
+                color:#0f0;
+                background:#000;
+                border:1px solid #0f0;
+                border-radius:8px;
+                cursor:pointer;
+              }
+            </style>
+          </head>
+          <body>
+            <iframe id="game" src="about:blank"></iframe>
+            <button onclick="document.getElementById('game').src='https://marzlib.xyz/filesgx/Bendy%20and%20the%20Ink%20Machine.html';document.getElementById('game').requestFullscreen();">
+              Enter Fullscreen
+            </button>
+          </body>
+        </html>
+      `);
+    };
+  </script>
+</head>
+<body>
+</body>
+</html>
