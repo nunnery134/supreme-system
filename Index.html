@@ -1,57 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hidden URL Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
   <script>
     window.onload = () => {
-      // open about:blank
-      const newWin = window.open("about:blank", "_self"); 
-      // write your site into it
-      newWin.document.write(`
-        <html>
-          <head>
-            <title>Bubbly Embed</title>
-            <style>
-              body {
-                margin:0;
-                height:100%;
-                background: linear-gradient(to bottom, #010500, #04751a, #000);
-                overflow:hidden;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                flex-direction:column;
-              }
-              iframe {
-                width:80%;
-                height:70%;
-                border:2px solid #0f0;
-                border-radius:12px;
-                background:black;
-              }
-              button {
-                margin-top:10px;
-                padding:8px 20px;
-                color:#0f0;
-                background:#000;
-                border:1px solid #0f0;
-                border-radius:8px;
-                cursor:pointer;
-              }
-            </style>
-          </head>
-          <body>
-            <iframe id="game" src="about:blank"></iframe>
-            <button onclick="document.getElementById('game').src='https://marzlib.xyz/filesgx/Bendy%20and%20the%20Ink%20Machine.html';document.getElementById('game').requestFullscreen();">
-              Enter Fullscreen
-            </button>
-          </body>
+      // Open about:blank in the same window
+      const blank = window.open("about:blank", "_self");
+
+      // Write the full website HTML into it
+      blank.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Bubbly Embed</title>
+          <style>
+            :root{
+              --green-top:#010500;
+              --green-mid:#04751a;
+              --green-deep:#032612;
+              --bg-black:#000000;
+              --box-bg: rgba(0,0,0,0.55);
+            }
+            html, body { margin:0; height:100%; font-family:system-ui,sans-serif; }
+            body {
+              display:flex;
+              flex-direction:column;
+              align-items:center;
+              justify-content:center;
+              background:
+                radial-gradient(1200px 700px at 50% 120%, rgba(255,255,255,0.04), transparent 60%),
+                linear-gradient(to bottom, var(--green-top) 0%, var(--green-mid) 40%, var(--green-deep) 70%, var(--bg-black) 100%);
+              overflow:hidden;
+            }
+            .bubbles {
+              position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+            }
+            .bubble {
+              position:absolute; bottom:-10vh; border-radius:50%;
+              background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), rgba(255,255,255,0.15) 70%, rgba(255,255,255,0.05) 100%);
+              animation: rise var(--dur,8s) linear forwards, drift var(--dur,8s) ease-in-out forwards;
+              opacity:0;
+            }
+            @keyframes rise {0%{transform:translateY(0);opacity:0;}5%{opacity:1;}85%{opacity:1;}100%{transform:translateY(-115vh);opacity:0;}}
+            @keyframes drift {0%{transform:translateX(0);}50%{transform:translateX(var(--drift,40px));}100%{transform:translateX(calc(var(--drift,40px)*-0.3));}}
+
+            .frame-wrap {
+              position:relative; z-index:1;
+              width:min(100%,1000px); aspect-ratio:16/9;
+              background:var(--box-bg); border-radius:14px; overflow:hidden;
+              backdrop-filter:blur(6px);
+              border:1px solid rgba(59,255,151,0.6);
+              box-shadow:0 0 12px rgba(59,255,151,0.6),0 0 60px rgba(59,255,151,0.25) inset,0 20px 60px rgba(0,0,0,0.5);
+            }
+            iframe {position:absolute; inset:0; width:100%; height:100%; border:none; background:#000;}
+
+            .btn-container {display:flex; gap:12px; margin-top:12px; z-index:1; position:relative;}
+            .fullscreen-btn, .home-btn {
+              padding:10px 18px; font-size:16px; color:#0f0; background:#000; border:1px solid #0f0;
+              border-radius:8px; cursor:pointer; box-shadow:0 0 10px #0f0, inset 0 0 10px #0f0;
+              display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
+            }
+            .fullscreen-btn:hover, .home-btn:hover { color:#000; background:#0f0; box-shadow:0 0 20px #0f0, inset 0 0 20px #000; }
+            .home-btn img {width:20px; height:20px;}
+          </style>
+        </head>
+        <body>
+          <div class="bubbles" id="bubbles"></div>
+          <div class="frame-wrap" id="frameBox">
+            <iframe id="gameFrame" src="about:blank"></iframe>
+          </div>
+          <div class="btn-container">
+            <button class="fullscreen-btn" id="fullscreenBtn">Enter Fullscreen</button>
+            <a class="home-btn" href="https://navisvip.netlify.app">
+              <img src="https://cdn-icons-png.flaticon.com/512/61/61972.png" alt="Home" /> Home
+            </a>
+          </div>
+          <script>
+            // bubbles
+            const layer = document.getElementById('bubbles');
+            function spawnBubble() {
+              const b=document.createElement('div'); b.className='bubble';
+              const size=Math.random()*26+8, left=Math.random()*100, dur=Math.random()*7+6;
+              const drift=(Math.random()*120+20)*(Math.random()<0.5?-1:1);
+              b.style.width=b.style.height=size+'px';
+              b.style.left=left+'vw';
+              b.style.setProperty('--dur', dur+'s');
+              b.style.setProperty('--drift', drift+'px');
+              b.addEventListener('animationend',()=>b.remove());
+              layer.appendChild(b);
+            }
+            for(let i=0;i<20;i++) spawnBubble();
+            setInterval(()=>{for(let i=0;i<1+Math.floor(Math.random()*3);i++) spawnBubble();},600);
+
+            // fullscreen
+            const btn=document.getElementById('fullscreenBtn');
+            const iframe=document.getElementById('gameFrame');
+            const frameBox=document.getElementById('frameBox');
+            btn.addEventListener('click',()=>{
+              iframe.src="https://smashstore2212.github.io/g26/class-458";
+              if(frameBox.requestFullscreen) frameBox.requestFullscreen();
+              else if(frameBox.webkitRequestFullscreen) frameBox.webkitRequestFullscreen();
+              else if(frameBox.msRequestFullscreen) frameBox.msRequestFullscreen();
+            });
+          </script>
+        </body>
         </html>
       `);
     };
   </script>
 </head>
 <body>
+  <p>Redirecting...</p>
 </body>
 </html>
